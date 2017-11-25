@@ -41,3 +41,4 @@ AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
 // and comment out the AdafruitIO_WiFi client in the WIFI section
 // #include "AdafruitIO_Ethernet.h"
 // AdafruitIO_Ethernet io(IO_USERNAME, IO_KEY);
+
