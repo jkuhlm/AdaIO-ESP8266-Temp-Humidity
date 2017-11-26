@@ -39,7 +39,6 @@ Adafruit_SSD1306 display = Adafruit_SSD1306();
 #endif
 
 // set up the 'temperature' and 'humidity' feeds
-AdafruitIO_Feed *temperatureC = io.feed("basement-temperatureC");
 AdafruitIO_Feed *temperatureF = io.feed("basement-temperatureF");
 AdafruitIO_Feed *humidity = io.feed("basement-humidity");
 
@@ -92,7 +91,6 @@ void loop() {
 
   // save vaues Adafruit IO
   temperatureF->save(fahrenheit);
-  temperatureC->save(celsius);
   humidity->save(relative_humidity);
 
   // Clear the buffer.
