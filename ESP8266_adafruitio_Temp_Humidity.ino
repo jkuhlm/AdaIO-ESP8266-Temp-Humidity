@@ -41,6 +41,7 @@ Adafruit_SSD1306 display = Adafruit_SSD1306();
 // set up the 'temperature' and 'humidity' feeds
 AdafruitIO_Feed *temperatureF = io.feed("freezer-temperatureF");
 AdafruitIO_Feed *humidity = io.feed("freezer-humidity");
+int cloudUpdateCount = 0;  // don't update the could to often 
 
 void setup() {
 
@@ -89,9 +90,13 @@ void loop() {
  
   float fahrenheit = (celsius * 1.8) + 32;
 
-  // save vaues Adafruit IO
-  temperatureF->save(fahrenheit);
-  humidity->save(relative_humidity);
+  cloudUpdateCount++;
+  if (cloudUpdateCount >= 6){
+    // save vaues Adafruit IO
+    temperatureF->save(fahrenheit);
+    humidity->save(relative_humidity);
+    cloudUpdateCount = 0;
+  }
 
   // Clear the buffer.
   display.clearDisplay();
