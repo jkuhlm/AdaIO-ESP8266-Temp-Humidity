@@ -40,7 +40,7 @@ Adafruit_SSD1306 display = Adafruit_SSD1306();
 
 // set up the 'temperature' and 'humidity' feeds
 AdafruitIO_Feed *temperatureF = io.feed("vent-temperatureF");
-int cloudUpdateCount = 0;  // don't update the could to often 
+float lastSavedTemperature = 0.0;
 
 void setup() {
 
@@ -86,11 +86,9 @@ void loop() {
  
   float fahrenheit = (celsius * 1.8) + 32;
 
-  cloudUpdateCount++;
-  if (cloudUpdateCount >= 6){
-    // save vaues Adafruit IO
+ // save temperatuere Adafruit IO if have gine up or down by 0.5f
+ if (fahrenheit+0.5 > lastSavedTemperature || fahrenheit-0.5 < lastSavedTemperature){
     temperatureF->save(fahrenheit);
-    cloudUpdateCount = 0;
   }
 
   // Clear the buffer.
@@ -106,7 +104,7 @@ void loop() {
 
   display.display(); // actually display all of the above
 
-  delay(10000);
+  delay(1000);
 
 }
 
