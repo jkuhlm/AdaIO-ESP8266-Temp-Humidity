@@ -89,6 +89,7 @@ void loop() {
  // save temperatuere Adafruit IO if have gine up or down by 0.5f
  if (fahrenheit+0.5 > lastSavedTemperature || fahrenheit-0.5 < lastSavedTemperature){
     temperatureF->save(fahrenheit);
+    lastSavedTemperature = fahrenheit;
   }
 
   // Clear the buffer.
