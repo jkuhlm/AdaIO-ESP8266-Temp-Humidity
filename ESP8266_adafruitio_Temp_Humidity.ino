@@ -40,8 +40,8 @@ Adafruit_SSD1306 display = Adafruit_SSD1306();
 
 // set up the 'temperature' and 'humidity' feeds
 AdafruitIO_Feed *temperatureF = io.feed("freezer-temperatureF");
-AdafruitIO_Feed *humidity = io.feed("freezer-humidity");
-int cloudUpdateCount = 0;  // don't update the could to often 
+AdafruitIO_Feed *relative_humidity = io.feed("freezer-humidity");
+float lastSavedTemperature = 0.0;
 
 void setup() {
 
@@ -81,22 +81,22 @@ void loop() {
   float celsius = event.temperature;
 
   dht.humidity().getEvent(&event);
-  float relative_humidity = event.relative_humidity;
+  float humidity = event.relative_humidity;
 
   // Check if any reads failed and exit early (to try again).
-  if (isnan(celsius) || isnan(relative_humidity)) {
+  if (isnan(celsius) || isnan(humidity)) {
     return;
   }
  
   float fahrenheit = (celsius * 1.8) + 32;
 
-  cloudUpdateCount++;
-  if (cloudUpdateCount >= 6){
-    // save vaues Adafruit IO
+ // save temperatuere Adafruit IO if have gine up or down by 0.5f
+ if (fahrenheit+0.5 > lastSavedTemperature || fahrenheit-0.5 < lastSavedTemperature){
     temperatureF->save(fahrenheit);
-    humidity->save(relative_humidity);
-    cloudUpdateCount = 0;
+    relative_humidity->save(humidity);
+    lastSavedTemperature = fahrenheit;
   }
+
 
   // Clear the buffer.
   display.clearDisplay();
