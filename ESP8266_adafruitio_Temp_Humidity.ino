@@ -91,7 +91,7 @@ void loop() {
   float fahrenheit = (celsius * 1.8) + 32;
 
  // save temperatuere Adafruit IO if have gine up or down by 0.5f
- if (fahrenheit+0.5 > lastSavedTemperature || fahrenheit-0.5 < lastSavedTemperature){
+ if (fahrenheit > lastSavedTemperature+0.5 || fahrenheit < lastSavedTemperature-0.5){
     temperatureF->save(fahrenheit);
     relative_humidity->save(humidity);
     lastSavedTemperature = fahrenheit;
