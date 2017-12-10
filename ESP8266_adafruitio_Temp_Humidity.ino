@@ -87,7 +87,7 @@ void loop() {
   float fahrenheit = (celsius * 1.8) + 32;
 
  // save temperatuere Adafruit IO if have gine up or down by 0.5f
- if (fahrenheit+0.5 > lastSavedTemperature || fahrenheit-0.5 < lastSavedTemperature){
+ if (fahrenheit > lastSavedTemperature+0.5 || fahrenheit < lastSavedTemperature-0.5){
     temperatureF->save(fahrenheit);
     lastSavedTemperature = fahrenheit;
   }
@@ -105,7 +105,7 @@ void loop() {
 
   display.display(); // actually display all of the above
 
-  delay(1000);
+  delay(2000);
 
 }
 
