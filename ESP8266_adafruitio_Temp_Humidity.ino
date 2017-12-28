@@ -41,6 +41,7 @@ Adafruit_SSD1306 display = Adafruit_SSD1306();
 // set up the 'temperature' and 'humidity' feeds
 AdafruitIO_Feed *temperatureF = io.feed("basement-temperatureF");
 AdafruitIO_Feed *humidity = io.feed("basement-humidity");
+float lastSavedTemperature = 0.0;
 
 void setup() {
 
@@ -89,9 +90,13 @@ void loop() {
  
   float fahrenheit = (celsius * 1.8) + 32;
 
-  // save vaues Adafruit IO
-  temperatureF->save(fahrenheit);
-  humidity->save(relative_humidity);
+
+ // save temperatuere Adafruit IO if have gine up or down by 0.5f
+ if (fahrenheit > lastSavedTemperature+0.5 || fahrenheit < lastSavedTemperature-0.5){
+    temperatureF->save(fahrenheit);
+    humidity->save(relative_humidity);    
+    lastSavedTemperature = fahrenheit;
+  }
 
   // Clear the buffer.
   display.clearDisplay();
