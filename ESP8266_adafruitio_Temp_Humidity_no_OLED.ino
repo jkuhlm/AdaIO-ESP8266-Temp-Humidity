@@ -23,8 +23,6 @@
 #include <DHT.h>
 #include <DHT_U.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
 
 // pin connected to DH22 data line
 #define DATA_PIN D3
@@ -32,38 +30,27 @@
 // create DHT22 instance
 DHT_Unified dht(DATA_PIN, DHT22);
 
-Adafruit_SSD1306 display = Adafruit_SSD1306();
-
-#if (SSD1306_LCDHEIGHT != 64)
- #error("Height incorrect, please fix Adafruit_SSD1306.h!");
-#endif
-
 // set up the 'temperature' and 'humidity' feeds
-AdafruitIO_Feed *temperatureF = io.feed("basement-temperatureF");
-AdafruitIO_Feed *humidity = io.feed("basement-humidity");
+AdafruitIO_Feed *temperatureF = io.feed("OverGarage-temperatureF");
+AdafruitIO_Feed *humidity = io.feed("OverGarage-humidity");
 float lastSavedTemperature = 0.0;
 
 void setup() {
 
   // initialize dht22
   dht.begin();
-
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  
-
-  // Show image buffer on the display hardware.
-  // Since the buffer is intialized with an Adafruit splashscreen
-  // internally, this will display the splashscreen.  display.display();
-  display.display();
   delay(1000);
 
-  
   // connect to io.adafruit.com
   io.connect();
 
   // wait for a connection
-  while(io.status() < AIO_CONNECTED) {
+  while (io.status() < AIO_CONNECTED) {
     delay(500);
   }
+
+  //  //Set hostname
+  //  WiFi.hostname("ESP_FamilyRoom");
 
 }
 
@@ -87,34 +74,23 @@ void loop() {
   if (isnan(celsius) || isnan(relative_humidity)) {
     return;
   }
- 
+
   float fahrenheit = (celsius * 1.8) + 32;
 
-
- // save temperatuere Adafruit IO if have gine up or down by 0.5f
- if (fahrenheit > lastSavedTemperature+0.5 || fahrenheit < lastSavedTemperature-0.5){
+  // save temperatuere Adafruit IO if have gine up or down by 0.25f
+  if (fahrenheit > lastSavedTemperature + 0.25 || fahrenheit < lastSavedTemperature - 0.25) {
     temperatureF->save(fahrenheit);
-    humidity->save(relative_humidity);    
+    humidity->save(relative_humidity);
     lastSavedTemperature = fahrenheit;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(100);                       // wait for a second
+    digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+    delay(100);                       // wait for a second
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(100);                       // wait for a second
+    digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+    delay(100);
   }
-
-  // Clear the buffer.
-  display.clearDisplay();
-  display.display();
-  
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  display.print("Temperature: ");
-  display.print(celsius);
-  display.println("C");
-  display.print("Temperature: ");
-  display.print(fahrenheit  );
-  display.println("F");
-  display.print("Humidity: ");
-  display.print(event.relative_humidity);
-  display.println("%");
-  display.display(); // actually display all of the above
 
   delay(10000);
 
